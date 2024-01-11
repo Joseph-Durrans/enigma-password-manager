@@ -22,8 +22,7 @@ var alpha = []byte{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', '
 
 func (r *rotor) forward(pos int) int {
 	// Get the position of the character in the alphabet:
-	for i := 0; i < len(alpha); i++ {
-		fmt.Println(byte('A'))
+	for i := range alpha {
 		if alpha[i] == r.wiring[pos] {
 			return i
 		}
@@ -35,7 +34,7 @@ func (r *rotor) forward(pos int) int {
 
 func (r *rotor) backward(pos int) int {
 	// Get the position of the character in the wiring:
-	for i := 0; i < len(r.wiring); i++ {
+	for i := range r.wiring {
 		if r.wiring[i] == alpha[pos] {
 			return i
 		}
@@ -86,11 +85,12 @@ func (rs *rotorSet) traverseForward(pos int) int {
 			pos = posMod(pos-rs.rotors[i].position+rs.rotors[i-1].position, len(rs.rotors[i].wiring))
 		}
 	}
+
 	return pos
 }
 
 func (rs *rotorSet) traverseBackward(pos int) int {
-	for i := 0; i < len(rs.rotors); i++ {
+	for i := range rs.rotors {
 		pos = rs.rotors[i].backward(pos)
 		
 		// Adjust for next rotor position:
@@ -104,7 +104,7 @@ func (rs *rotorSet) traverseBackward(pos int) int {
 
 func (rs *rotorSet) reflect(pos int) int {
 	// Get the position of the character in the alphabet:
-	for i := 0; i < len(alpha); i++ {
+	for i := range alpha {
 		if alpha[i] == rs.reflector[pos] {
 			return i
 		}
@@ -114,10 +114,10 @@ func (rs *rotorSet) reflect(pos int) int {
 	return 0
 }
 
-func (rs *rotorSet) encode(message string) (string, error) {
+func (rs *rotorSet) encode(message string) string {
 	var encodedMessage []byte
 
-	for i := 0; i < len(message); i++ {
+	for i := range message {
 		// Rotate the rotors:
 		rs.rotate()
 
@@ -129,7 +129,7 @@ func (rs *rotorSet) encode(message string) (string, error) {
 
 		// Get the position of the character in the alphabet adjusted for the next rotor position:
 		var pos int
-		for j := 0; j < len(alpha); j++ {
+		for j := range alpha {
 			if alpha[j] == message[i] {
 				pos = posMod(j+rs.rotors[len(rs.rotors)-1].position, len(alpha))
 			}
@@ -138,7 +138,6 @@ func (rs *rotorSet) encode(message string) (string, error) {
 		// Go forward through rotors adjusting for position:
 		for j := 0; j < rs.repeat; j++ {
 			pos = rs.traverseForward(pos)
-		
 		}
 
 		// Reflect the signal:
@@ -156,12 +155,12 @@ func (rs *rotorSet) encode(message string) (string, error) {
 		encodedMessage = append(encodedMessage, alpha[pos])
 	}
 
-	return string(encodedMessage), nil
+	return string(encodedMessage)
 }
 
 func posMod(a, b int) int {
 	// Modulo operator that always returns a positive number:
-	return ((a % b) + b) % b
+	return (a % b + b) % b
 }
 
 func main() {
@@ -192,9 +191,8 @@ func main() {
 		var rPos, rInc int
 		fmt.Printf("Enter rotor %d position and increment (0 - 25): ", i)
 		if _, err := fmt.Scanln(&rPos, &rInc); err != nil {
-			fmt.Println("Error:", err, "Setting rotor position and increment to 0 and 1")
-			rPos, rInc = 0, 1
-
+			fmt.Println("Error:", err, "rotor position and increment must be between 0 and 25")
+			return
 		}
 
 		if rPos > 25 || rPos < 0 {
@@ -214,8 +212,8 @@ func main() {
 	// Set repeat with user input:
 	fmt.Print("Enter repeat: ")
 	if _, err := fmt.Scanln(&rs.repeat); err != nil {
-		fmt.Println("Error:", err, "Setting repeat to 1")
-		rs.repeat = 1
+		fmt.Println("Error:", err, "repeat must be an integer")
+		return;
 	}
 
 	// Get message from user:
