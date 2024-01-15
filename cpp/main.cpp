@@ -41,7 +41,6 @@ private:
 
 class RotorSet {
 public:
-
     RotorSet(std::vector<Rotor*> rotors, std::array<char, 26> reflector, int repeat = 1) : rotors(rotors), reflector(reflector), repeat(repeat) {}
 
     void rotate();
@@ -49,7 +48,6 @@ public:
     int traverseBackward(int pos);
     int reflect(int pos);
     std::string encode(std::string msg);
-
 
     std::vector<Rotor*> getRotors() const {
 		return this->rotors;
@@ -66,7 +64,6 @@ public:
     void setRepeat(int repeat) {
         this->repeat = repeat;
     }
-
 private:
     std::vector<Rotor*> rotors;
     const std::array<char, 26> reflector;
@@ -267,8 +264,9 @@ int main() {
 
     // Set repeat with user input:
     try {
+                int repeat;
+
         std::cout << "Enter repeat (1 - 25): ";
-        int repeat;
         std::cin >> repeat;
         rs.setRepeat(repeat);
     }
