@@ -41,6 +41,7 @@ private:
 
 class RotorSet {
 public:
+
     RotorSet(std::vector<Rotor*> rotors, std::array<char, 26> reflector, int repeat = 1) : rotors(rotors), reflector(reflector), repeat(repeat) {}
 
     void rotate();
@@ -48,6 +49,7 @@ public:
     int traverseBackward(int pos);
     int reflect(int pos);
     std::string encode(std::string msg);
+
 
     std::vector<Rotor*> getRotors() const {
 		return this->rotors;
@@ -64,6 +66,7 @@ public:
     void setRepeat(int repeat) {
         this->repeat = repeat;
     }
+
 private:
     std::vector<Rotor*> rotors;
     const std::array<char, 26> reflector;
@@ -214,8 +217,6 @@ std::string RotorSet::encode(std::string msg) {
 
         // Get the character from the alphabet:
         encodedMsg += alpha[pos];
-
-
     }
 
     return encodedMsg;
@@ -238,15 +239,14 @@ int main() {
     // For each rotor in rotor set, set position and increment with user input:
     for (Rotor* r : rs.getRotors()) {
         int rPos, rInc;
+  
+        std::cout << "Enter rotor position and increment (0 - 25): ";
+        std::cin >> rPos >> rInc;
 
-        try {
-            std::cout << "Enter rotor position and increment (0 - 25): ";
-            std::cin >> rPos >> rInc;
-        }
-        catch (std::exception e) {
-            std::cout << "Error: " << e.what() << " rotor position and increment must be between 0 and 25";
-            return 0;
-        }
+        if (std::cin.fail()) {
+			std::cout << "Error: rotor position and increment must be integers";
+			return 0;
+		}
 
         if (rPos > 25 || rPos < 0) {
             std::cout << "Error: rotor position must be between 0 and 25";
@@ -263,17 +263,16 @@ int main() {
     }
 
     // Set repeat with user input:
-    try {
-                int repeat;
+    int repeat;
+    std::cout << "Enter repeat (1 - 25): ";
+    std::cin >> repeat;
+  
+    if (std::cin.fail()) {
+		std::cout << "Error: repeat must be an integer";
+		return 0;
+	}
 
-        std::cout << "Enter repeat (1 - 25): ";
-        std::cin >> repeat;
-        rs.setRepeat(repeat);
-    }
-    catch (std::exception e) {
-        std::cout << "Error: repeat must be an integer";
-        return 0;
-    }
+    rs.setRepeat(repeat);
 
     // Get message from user:
     std::string msg;
