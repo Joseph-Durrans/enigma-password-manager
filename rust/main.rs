@@ -88,8 +88,6 @@ impl RotorSet {
         let mut encoded_message = Vec::new();
 
         for ch in message.chars() {
-            println!("NEW CHARACTER");
-
             self.rotate();
 
             if ch == ' ' {
@@ -119,11 +117,6 @@ impl RotorSet {
         encoded_message.into_iter().collect()
     }
 }
-
-// positive modulous function
-// fn pos_mod(x: usize, y: usize) -> usize {
-//     (x % y + y) % y
-// }
 
 fn main() {
     let r1 = Rotor {
