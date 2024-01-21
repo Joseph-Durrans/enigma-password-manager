@@ -18,6 +18,7 @@ type rotorSet struct {
 	repeat    int
 }
 
+// Alphabet:
 var alpha = [26]byte{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 
 func (r *rotor) forward(pos int) (int, error) {
@@ -87,6 +88,7 @@ func (rs *rotorSet) traverseForward(pos int) (int, error) {
 		// Adjust for next rotor position:
 		if i != 0 {
 			pos = posMod(pos-rs.rotors[i].position+rs.rotors[i-1].position, len(rs.rotors[i].wiring))
+
 		}
 	}
 
@@ -143,7 +145,6 @@ func (rs *rotorSet) encode(message string) (string, error) {
 			}
 		}
 
-		// Go forward through rotors adjusting for position:
 		for j := 0; j < rs.repeat; j++ {
 			var err error
 			pos, err = rs.traverseForward(pos)
@@ -153,7 +154,6 @@ func (rs *rotorSet) encode(message string) (string, error) {
 			}
 		}
 
-		// Reflect the signal:
 		pos, err := rs.reflect(pos)
 		if err != nil {
 			return string(encodedMessage), err
@@ -242,7 +242,6 @@ func main() {
 
 	// Convert message to uppercase:
 	message = strings.ToUpper(message)
-
 
 	// check if message contains any characters not in alpha
 	for i := 0; i < len(message); i++ {

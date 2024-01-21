@@ -4,15 +4,33 @@
 #include <string>
 #include <array>
 
-class Rotor {
+// Demo of inheritance:
+class InheritanceDemo {
 public:
-    Rotor(std::array<char, 26> wiring, char notch, int position = 0, int increment = 1) : wiring(wiring), notch(notch), position(position), increment(increment) {}
+    virtual std::array<char, 26> getWiring() const {
+		return this->wiring;
+	}
 
+protected:
+    std::array<char, 26> wiring = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+};
+
+// Inherits from InheritanceDemo:
+class Rotor: public InheritanceDemo  {
+public:
+    // Constructor:
+    Rotor(std::array<char, 26> wiring, char notch, int position = 0, int increment = 1) : notch(notch), position(position), increment(increment) {
+        // Set inherited wiring:
+        this->wiring = wiring;
+    }
+
+    // Functions:
     int forward(int pos);
     int backward(int pos);
     void incrementRotor();
     bool reachedNotch();
 
+    // Getters and setters:
     int getPosition() const {
         return this->position;
     }
@@ -29,34 +47,33 @@ public:
         this->increment = increment;
     }
 
-    std::array<char, 26> getWiring() const {
-		return this->wiring;
-	}
 private:
-    const std::array<char, 26> wiring;
+    // Variables:
     int position;
     int increment;
     int notch;
 };
 
-class RotorSet {
+
+// Inherits from InheritanceDemo:
+class RotorSet: public InheritanceDemo {
 public:
+    // Constructor:
+    RotorSet(std::vector<Rotor*> rotors, std::array<char, 26> wiring, int repeat = 1) : rotors(rotors), repeat(repeat) {
+        // Set inherited wiring:
+    	this->wiring = wiring;
+    }
 
-    RotorSet(std::vector<Rotor*> rotors, std::array<char, 26> reflector, int repeat = 1) : rotors(rotors), reflector(reflector), repeat(repeat) {}
-
+    // Functions:
     void rotate();
     int traverseForward(int pos);
     int traverseBackward(int pos);
     int reflect(int pos);
     std::string encode(std::string msg);
 
-
+    // Getters and setters:
     std::vector<Rotor*> getRotors() const {
 		return this->rotors;
-	}
-
-    std::array<char, 26> getReflector() const {
-		return this->reflector;
 	}
 
     int getRepeat() const {
@@ -68,15 +85,18 @@ public:
     }
 
 private:
+    // Variables:
     std::vector<Rotor*> rotors;
-    const std::array<char, 26> reflector;
     int repeat;
 
+    // Functions:
     static int posMod(int a, int b) {
         return (a % b + b) % b;
     }
 };
 
+
+// Alphabet:
 const std::array<char, 26> alpha = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 int Rotor::forward(int pos)
@@ -87,7 +107,6 @@ int Rotor::forward(int pos)
             return i;
         }
     }
-
     // If the character is not found, return 0:
     return 0;
 }
@@ -161,13 +180,12 @@ int RotorSet::traverseBackward(int pos) {
     }
 
     return pos;
-
 }
 
 int RotorSet::reflect(int pos) {
     // Get the position of the character in the alphabet:
     for (int i = 0; i < alpha.size(); i++) {
-        if (alpha[i] == this->reflector[pos]) {
+        if (alpha[i] == this->wiring[pos]) {
             return i;
         }
     }
@@ -180,8 +198,6 @@ std::string RotorSet::encode(std::string msg) {
     std::string encodedMsg;
 
     for (int i = 0; i < msg.size(); i++) {
-
-
         // Rotate the rotors:
         this->rotate();
 
@@ -225,22 +241,22 @@ std::string RotorSet::encode(std::string msg) {
 
 
 int main() {
-    // Create rotors:
     RotorSet rs(
         {
-            new Rotor({ 'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J' }, 'Q', 0, 1),
-            new Rotor({ 'A', 'J', 'D', 'K', 'S', 'I', 'R', 'U', 'X', 'B', 'L', 'H', 'W', 'T', 'M', 'C', 'Q', 'G', 'Z', 'N', 'P', 'Y', 'F', 'V', 'O', 'E' }, 'E', 0, 1),
-            new Rotor({ 'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O' }, 'V', 0, 1)
-        },
-        { 'Y', 'R', 'U', 'H', 'Q', 'S', 'L', 'D', 'P', 'X', 'N', 'G', 'O', 'K', 'M', 'I', 'E', 'B', 'F', 'Z', 'C', 'W', 'V', 'J', 'A', 'T' },
-        1
-    );
+			new Rotor({ 'E', 'K', 'M', 'F', 'L', 'G', 'D', 'Q', 'V', 'Z', 'N', 'T', 'O', 'W', 'Y', 'H', 'X', 'U', 'S', 'P', 'A', 'I', 'B', 'R', 'C', 'J' }, 'Q', 0, 1),
+			new Rotor({ 'A', 'J', 'D', 'K', 'S', 'I', 'R', 'U', 'X', 'B', 'L', 'H', 'W', 'T', 'M', 'C', 'Q', 'G', 'Z', 'N', 'P', 'Y', 'F', 'V', 'O', 'E' }, 'E', 0, 1),
+			new Rotor({ 'B', 'D', 'F', 'H', 'J', 'L', 'C', 'P', 'R', 'T', 'X', 'V', 'Z', 'N', 'Y', 'E', 'I', 'W', 'G', 'A', 'K', 'M', 'U', 'S', 'Q', 'O' }, 'V', 0, 1)
+		},
+		{ 'Y', 'R', 'U', 'H', 'Q', 'S', 'L', 'D', 'P', 'X', 'N', 'G', 'O', 'K', 'M', 'I', 'E', 'B', 'F', 'Z', 'C', 'W', 'V', 'J', 'A', 'T' },
+		1
+	);  
 
     // For each rotor in rotor set, set position and increment with user input:
+    int i = 0;
     for (Rotor* r : rs.getRotors()) {
         int rPos, rInc;
   
-        std::cout << "Enter rotor position and increment (0 - 25): ";
+        std::cout << "Enter rotor " << i <<  " position and increment(0 - 25): ";
         std::cin >> rPos >> rInc;
 
         if (std::cin.fail()) {
@@ -260,11 +276,13 @@ int main() {
 
         r->setPosition(rPos);
         r->setIncrement(rInc);
+
+        i++;
     }
 
     // Set repeat with user input:
     int repeat;
-    std::cout << "Enter repeat (1 - 25): ";
+    std::cout << "Enter repeat: ";
     std::cin >> repeat;
   
     if (std::cin.fail()) {
